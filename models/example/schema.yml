@@ -1,0 +1,189 @@
+version: 2
+
+sources:
+  - name: MY_DATABASE
+    database: MY_DATABASE
+    schema: PUBLIC
+    tables:
+      # Fact Table: FACT_SALES
+      - name: FACT_SALES
+        description: "Fact table containing sales transactions"
+        columns:
+          - name: SALES_ORDER
+            description: "Unique sales order identifier"
+            tests:
+              - not_null
+          - name: INVOICE_NO
+            description: "Invoice number linked to a sales order"
+            tests:
+              - not_null
+          - name: INVOICE_DATE
+            description: "Date of invoice"
+            tests:
+              - not_null
+          - name: CUSTOMER_ID
+            description: "Foreign key linking to CUSTOMER_DIMENSION"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('MY_DATABASE', 'CUSTOMER_DIMENSION')
+                  field: CUSTOMER_ID
+          - name: PRODUCT_ID
+            description: "Foreign key linking to PRODUCT_DIMENSION"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('MY_DATABASE', 'PRODUCT_DIMENSION')
+                  field: PRODUCT_ID
+          - name: PLANT_ID
+            description: "Foreign key linking to PLANT_DIMENSION"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('MY_DATABASE', 'PLANT_DIMENSION')
+                  field: PLANT_ID
+          - name: STATEID
+            description: "Foreign key linking to LOCATION_DIMENSION"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('MY_DATABASE', 'LOCATION_DIMENSION')
+                  field: STATEID
+          - name: CUSTOMER_GRP_ID
+            description: "Foreign key linking to CUSTOMER_GROUP_DIMENSION"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('MY_DATABASE', 'CUSTOMER_GROUP_DIMENSION')
+                  field: CUSTOMER_GRP_ID
+          - name: BASIC_AMT
+            description: "Basic amount for the order"
+            tests:
+              - not_null
+              - greater_than: 0
+          - name: BASIC_RATE
+            description: "Rate per unit"
+            tests:
+              - not_null
+              - greater_than: 0
+          - name: QUANTITY
+            description: "Total quantity sold"
+            tests:
+              - not_null
+              - greater_than: 0
+          - name: NET_AMT_DC
+            description: "Net amount after discounts"
+            tests:
+              - not_null
+              - greater_than: 0
+          - name: DISCOUNT_A
+            description: "Discount applied"
+            tests:
+              - not_null
+              - greater_than_or_equal_to: 0
+
+      # Dimension Table: CUSTOMER_DIMENSION
+      - name: CUSTOMER_DIMENSION
+        description: "Customer details dimension table"
+        columns:
+          - name: CUSTOMER_ID
+            description: "Primary key for customers"
+            tests:
+              - unique
+              - not_null
+          - name: CUSTOMER_NAME
+            description: "Customer name"
+            tests:
+              - not_null
+          - name: ADDRESS
+            description: "Customer address"
+            tests:
+              - not_null
+
+      # Dimension Table: CUSTOMER_GROUP_DIMENSION
+      - name: CUSTOMER_GROUP_DIMENSION
+        description: "Customer group details"
+        columns:
+          - name: CUSTOMER_GRP_ID
+            description: "Primary key for customer groups"
+            tests:
+              - unique
+              - not_null
+          - name: CUSTOMER_GRP_NAME
+            description: "Customer group name"
+            tests:
+              - not_null
+
+      # Dimension Table: LOCATION_DIMENSION
+      - name: LOCATION_DIMENSION
+        description: "Location details"
+        columns:
+          - name: STATEID
+            description: "Primary key for states"
+            tests:
+              - unique
+              - not_null
+          - name: SALESREGION
+            description: "Sales region"
+            tests:
+              - not_null
+          - name: SALESZONE
+            description: "Sales zone"
+            tests:
+              - not_null
+          - name: STATENAME
+            description: "State name"
+            tests:
+              - not_null
+
+      # Dimension Table: PLANT_DIMENSION
+      - name: PLANT_DIMENSION
+        description: "Plant details"
+        columns:
+          - name: PLANT_ID
+            description: "Primary key for plants"
+            tests:
+              - unique
+              - not_null
+          - name: SORG
+            description: "Sales organization"
+            tests:
+              - not_null
+          - name: DCH
+            description: "Distribution channel"
+            tests:
+              - not_null
+          - name: DIV
+            description: "Division"
+            tests:
+              - not_null
+
+      # Dimension Table: PRODUCT_DIMENSION
+      - name: PRODUCT_DIMENSION
+        description: "Product details"
+        columns:
+          - name: PRODUCT_ID
+            description: "Primary key for products"
+            tests:
+              - unique
+              - not_null
+          - name: PRODUCT_NAME
+            description: "Product name"
+            tests:
+              - not_null
+          - name: PRODUCT_TYPE
+            description: "Product type"
+            tests:
+              - not_null
+          - name: PRODUCT_CATEGORY
+            description: "Product category"
+            tests:
+              - not_null
+          - name: ANDRIS
+            description: "Additional product attribute"
+            tests:
+              - not_null
+          - name: EWH_GROUPS
+            description: "EWH product group"
+            tests:
+              - not_null
